@@ -12,4 +12,26 @@ app.use(json())
 app.use(urlencoded({ extended: true }))
 app.use(morgan('dev'))
 
-export const start = () => {}
+app.get('/', (req, res) => {
+  res.send({ message: 'hello' })
+})
+
+app.post('/', (req, res) => {
+  console.log(req.body)
+  res.send({ message: 'ok' })
+})
+
+app.get('/cats', (req, res) => {
+  res.send({ cat: 'Kirby' })
+})
+
+app.post('/cats', (req, res) => {
+  console.log(req.body)
+  res.send({ message: 'hello' })
+})
+
+export const start = () => {
+  app.listen(2000, () => {
+    console.log('server is on port 2000')
+  })
+}
