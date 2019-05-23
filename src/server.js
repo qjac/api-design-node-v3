@@ -15,11 +15,20 @@ app.use(json()) // transforms the request into easily digested JSON. The node wa
 app.use(urlencoded({ extended: true })) //allows us to attach params to url query string
 app.use(morgan('dev')) // does logging when server starts up
 
-// let's make out own middleware
+// let's make our own middleware
+// next param is a fn in express that calls the next middleware
+const log = (req, res, next) => {
+  console.log('logging')
+  next() // if you call next with an arg, the arg is an error msg that gets passed along
+}
 
 // this is a controller!
 // the final fn that runs before respone. between request and response
-app.get('/data', (req, res) => {
+
+// add your custom middleware as an arg in your controller to run before. this will only run for this route.
+// to run for all routes use `app.use(log)`
+// to run several in sequence, use an array `[log, log, otherMW, log]`
+app.get('/data', log, (req, res) => {
   res.send({ message: 'hello again' })
 })
 
