@@ -5,6 +5,8 @@ import cors from 'cors'
 
 export const app = express()
 
+const router = express.Router()
+
 app.disable('x-powered-by') // https://github.com/expressjs/discussions/issues/39
 
 // these are middleware to run functions to transform the data before the controller gets or posts or...
@@ -17,18 +19,38 @@ app.use(morgan('dev')) // does logging when server starts up
 
 // let's make our own middleware
 // next param is a fn in express that calls the next middleware
-const log = (req, res, next) => {
-  console.log('logging')
-  next() // if you call next with an arg, the arg is an error msg that gets passed along
-}
+// const log = (req, res, next) => {
+//   console.log('logging')
+//   next() // if you call next with an arg, the arg is an error msg that gets passed along
+// }
+
+// and here's our subrouter. this allows you to set multiple rules/middleware for different parts of the api
+router.get('/me', (req, res) => {
+  res.send({ me: 'hello' })
+}) // routers use same syntax as controllers
+
+// to simplify writing out all of the different routes (there usualy aren't many) with all of the CRUD operation (POST, PUT, GET, DELETE). use this shorthand:
+router
+  .route('/cat')
+  .get()
+  .post()
+
+router
+  .route('/cat/:id')
+  .get()
+  .put()
+  .delete() // pass middleware in as args
+
+// register the router on the app
+app.use('/api', router) // if areq comes in for '/api' use the router (like middleware). now a GET to '/api/me' will respond with what's in the router `res.send({ me: 'hello' })`
 
 // this is a controller!
 // the final fn that runs before respone. between request and response
 
-// add your custom middleware as an arg in your controller to run before. this will only run for this route.
+// add your custom middleware as an arg in your controller to run before. this will only run for this route. app.get('/data', log, (req, res) => {
 // to run for all routes use `app.use(log)`
 // to run several in sequence, use an array `[log, log, otherMW, log]`
-app.get('/data', log, (req, res) => {
+app.get('/data', (req, res) => {
   res.send({ message: 'hello again' })
 })
 
