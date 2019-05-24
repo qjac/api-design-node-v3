@@ -1,4 +1,4 @@
 import { crudControllers } from '../../utils/crud'
-import { Items } from './items.model'
+import { Item } from './item.model'
 
-export default crudControllers(Items)
+export default crudControllers(Item)
